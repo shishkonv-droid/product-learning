@@ -1,5 +1,5 @@
 // Bump VERSION when content changes so phones pick up the update.
-const VERSION = "v1";
+const VERSION = "31971bed71";
 const CACHE = "pm-course-" + VERSION;
 const ASSETS = [
   "./", "index.html", "style.css", "app.js", "data.js", "manifest.webmanifest",

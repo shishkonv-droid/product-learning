@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Converts the course doc (XML export + week1 markdown) into data.js for the PWA.
 
-Usage: python3 tools/build_data.py main.xml week1.md > data.js
+Usage: python3 tools/build_data.py tools/src/main.xml tools/src/weeks > data.js
+Each tools/src/weeks/week-NN.md holds the full lessons of one week ("## Урок N · ..." sections).
 """
+import glob
 import html
+import os
 import json
 import re
 import sys
@@ -104,6 +107,7 @@ def parse_start(dates):
 
 def md_inline(s):
     s = html.escape(s, quote=False)
+    s = re.sub(r"\[([^\]]+)\]\((https?://[^)\s]+)\)", r'<a href="\2" target="_blank" rel="noopener">\1</a>', s)
     return re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", s)
 
 
@@ -142,7 +146,7 @@ def md_to_html(md):
     return "".join(out)
 
 
-def main(xml_path, week1_path):
+def main(xml_path, weeks_dir):
     root = ET.fromstring(open(xml_path, encoding="utf-8").read())
     els = list(root)
     weeks, sections, notes = [], [], []
@@ -188,7 +192,7 @@ def main(xml_path, week1_path):
             cur_section["html"] += block(el, prefix)
         i += 1
 
-    md = open(week1_path, encoding="utf-8").read()
+    md = "\n".join(open(f, encoding="utf-8").read() for f in sorted(glob.glob(os.path.join(weeks_dir, "week-*.md"))))
     full = {}
     for part in re.split(r"^## ", md, flags=re.M)[1:]:
         head, body = part.split("\n", 1)

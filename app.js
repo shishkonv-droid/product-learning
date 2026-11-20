@@ -233,10 +233,10 @@
 
   function addCopyButtons() {
     view.querySelectorAll(".content blockquote").forEach((bq) => {
+      const txt = bq.innerText.trim().replace(/^«|»$/g, "").trim();
       const b = document.createElement("button");
       b.className = "copy-btn"; b.textContent = "Скопировать промпт";
       b.addEventListener("click", async () => {
-        const txt = bq.innerText.replace(/^«|»$/g, "").trim();
         try { await navigator.clipboard.writeText(txt); toast("Промпт скопирован"); }
         catch (e) { toast("Не удалось скопировать"); }
       });
